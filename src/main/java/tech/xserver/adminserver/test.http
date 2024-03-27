@@ -1,0 +1,52 @@
+POST http://localhost:7777/movies
+Content-Type: application/json
+
+{
+  "title": "The Matrix",
+  "original_language": "en",
+  "original_title": "The Matrix",
+  "overview": "A computer hacker learns from mysterious rebels about the true nature of his reality and his role in the war against its controllers.",
+  "poster_path": "/f89U3ADr1oiB1s9GkdPOEpXUk5H.jpg",
+  "media_type": "movie",
+  "popularity": 40.0,
+  "release_date": "1999-03-30",
+  "video": false,
+  "vote_average": 8.1,
+  "vote_count": 19200,
+  "adult": false,
+  "backdrop_path": "/f89U3ADr1oiB1s9GkdPOEpXUk5H.jpg"
+}
+###
+
+GET http://localhost:7777/movies?page=9&size=20
+###
+
+PATCH http://localhost:7777/movies/234
+Content-Type: application/json
+
+{
+"title": "The Matrix Reloadedxx4xx"
+}
+
+###
+POST http://localhost:7777/certifications
+Content-Type: application/json
+
+{
+  "certification": "+18",
+    "description": "For adults only",
+  "level": 3
+
+}
+###
+GET http://localhost:7777/certifications
+###
+
+POST http://localhost:7777/sendMail
+Content-Type: application/json
+
+{
+  "to": "mabdelaziz@sumerge.com",
+  "subject": "Test",
+  "text": "final test and everything iw working great rrrrrrrrrrrrr"
+}
