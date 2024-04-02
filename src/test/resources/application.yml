@@ -1,0 +1,40 @@
+server:
+  port: 7777
+spring:
+  data:
+    web:
+      pageable:
+        one-indexed-parameters: true
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+  datasource:
+    url: jdbc:h2:mem:testdb
+    username: sa
+    password: sa
+    driver-class-name: org.h2.Driver
+
+  cloud:
+    openfeign:
+      client:
+        config:
+          movieWrapper:
+            url: https://wrapper.xserver.tech
+            connectTimeout: 5000
+            readTimeout: 5000
+            loggerLevel: full
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: mo7amedr763@gmail.com
+    password: xovlwzgyaxmrbqmi
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+            required: true
+  kafka:
+    bootstrap-servers: localhost:9092
