@@ -64,7 +64,7 @@ public class ViewsServiceImpl implements ViewsService {
     }
 
     @Override
-    public List<MovieEntity> getUserViews(Long userId) {
+    public List<MovieEntity> getUserViews(Long userId, boolean filterAdult) {
 //        log.info("views" + viewsRepo.findByUserId(userId));
 //        return viewsRepo.findByUserId(userId);
         List<ViewsEntity> views = viewsRepo.findByUserId(userId);
@@ -74,7 +74,7 @@ public class ViewsServiceImpl implements ViewsService {
                 movieService.getMovie(view.getMovieId(), false).ifPresent(movies::add);
             } else {
                 log.info("External movie");
-                Optional<MovieEntity> movie = movieService.getMovie(view.getMovieId(), false);
+                Optional<MovieEntity> movie = movieService.getMovie(view.getMovieId(), filterAdult);
                 if (movie.isPresent()) {
                     movie.get().setId(90000000000L + movie.get().getId());
                     movies.add(movie.get());

@@ -2,6 +2,8 @@ package tech.xserver.adminserver.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import tech.xserver.adminserver.DTO.VotesDto;
 import tech.xserver.adminserver.filter.Claims;
@@ -30,14 +32,15 @@ public class VotesController {
     }
 
     @GetMapping("/check/{movieId}")
-    public boolean checkIfUserVoted(@RequestAttribute("accessToken") String accessToken, @PathVariable Long movieId) {
+    public ResponseEntity<Boolean> checkIfUserVoted(@RequestAttribute("accessToken") String accessToken, @PathVariable Long movieId) {
         Long userId = claims.getClaims(accessToken, "uid");
-        return votesService.isVoted(userId, movieId);
+        return new ResponseEntity<>(votesService.isVoted(userId, movieId), HttpStatus.OK);
+//        return votesService.isVoted(userId, movieId);
     }
 
     @GetMapping("/{movieId}")
-    public float getMovieVotes(@PathVariable Long movieId) {
-        return votesService.getMovieVotes(movieId);
+    public ResponseEntity<Float> getMovieVotes(@PathVariable Long movieId) {
+        return new ResponseEntity<>(votesService.getMovieVotes(movieId), HttpStatus.OK);
+//        return votesService.getMovieVotes(movieId);
     }
-
 }

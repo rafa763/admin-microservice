@@ -43,8 +43,13 @@ public class ViewsController {
     @GetMapping()
     public ResponseEntity<?> getUserViews(@RequestAttribute("accessToken") String accessToken) {
         Long userId = claims.getClaims(accessToken, "uid");
+        boolean filterAdult = false;
+        String r = claims.getRoles(accessToken).get(0);
+        if (r.equalsIgnoreCase("CHILD")) {
+            filterAdult = true;
+        }
         log.info("Getting views for user: " + userId);
-        return ResponseEntity.ok(viewsService.getUserViews(userId));
+        return ResponseEntity.ok(viewsService.getUserViews(userId, filterAdult));
     }
 
 }

@@ -10,6 +10,6 @@ import java.util.List;
 public interface ViewsService {
     public void addView(ViewsEntity viewsEntity);
     public Long getMovieViews(Long movieId);
-    public List<MovieEntity> getUserViews(Long userId);
+    public List<MovieEntity> getUserViews(Long userId, boolean filterAdult);
 
 }

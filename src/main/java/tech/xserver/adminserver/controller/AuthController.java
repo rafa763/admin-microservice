@@ -46,29 +46,32 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public SafeUserDto register(@RequestBody RegisterDto registerDto) {
+    public ResponseEntity<SafeUserDto> register(@RequestBody RegisterDto registerDto) {
         log.info("Registering user: " + registerDto);
 
         UserEntity user = userService.saveUser(registerDto);
         mailConfig.sendMessage(new Mail(user.getEmail(), "Registration", "Thanks for your registration!"));
-        return userMapper.mapToSafeUserDto(user);
+        return new ResponseEntity<>(userMapper.mapToSafeUserDto(user), HttpStatus.CREATED);
+//        return userMapper.mapToSafeUserDto(user);
     }
 
     @GetMapping("/account")
-    public SafeUserDto getAccount(@RequestAttribute("accessToken") String accessToken) {
+    public ResponseEntity<SafeUserDto> getAccount(@RequestAttribute("accessToken") String accessToken) {
         Long id = claims.getClaims(accessToken, "uid");
         UserEntity user = userService.getUserById(id).orElseThrow(() -> new RuntimeException("User not found"));
-        return userMapper.mapToSafeUserDto(user);
+        return new ResponseEntity<>(userMapper.mapToSafeUserDto(user), HttpStatus.OK);
+//        return userMapper.mapToSafeUserDto(user);
     }
 
     @GetMapping("/account/type")
-    public SafeUserDto getAccountType(@RequestAttribute("accessToken") String accessToken) {
+    public ResponseEntity<SafeUserDto> getAccountType(@RequestAttribute("accessToken") String accessToken) {
         Long id = claims.getClaims(accessToken, "uid");
         UserEntity user = userService.getUserById(id).orElse(null);
         if (user == null) {
             throw new RuntimeException("User not found");
         }
-        return userMapper.mapToSafeUserDto(user);
+        return new ResponseEntity<>(userMapper.mapToSafeUserDto(user), HttpStatus.OK);
+//        return userMapper.mapToSafeUserDto(user);
     }
 
     @DeleteMapping("/account")

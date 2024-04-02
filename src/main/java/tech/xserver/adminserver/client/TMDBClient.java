@@ -9,7 +9,7 @@ import tech.xserver.adminserver.DTO.MovieDto;
 import tech.xserver.adminserver.DTO.WrapperDto;
 
 @FeignClient(name = "movieWrapper")
-public interface Client {
+public interface TMDBClient {
     @RequestMapping("/movies")
     ResponseEntity<WrapperDto> getTrending(@RequestParam("page") Integer page, @RequestParam("size") Integer size);
 

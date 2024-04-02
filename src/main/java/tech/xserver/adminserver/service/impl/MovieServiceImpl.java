@@ -9,8 +9,7 @@ import org.springframework.stereotype.Service;
 import tech.xserver.adminserver.DTO.MovieDto;
 import tech.xserver.adminserver.DTO.PaginatedResponse;
 import tech.xserver.adminserver.DTO.WrapperDto;
-import tech.xserver.adminserver.client.Client;
-import tech.xserver.adminserver.entity.CertificationEntity;
+import tech.xserver.adminserver.client.TMDBClient;
 import tech.xserver.adminserver.entity.MovieEntity;
 import tech.xserver.adminserver.mappers.MovieMapper;
 import tech.xserver.adminserver.mappers.WrapperMapper;
@@ -28,14 +27,14 @@ import java.util.stream.Stream;
 @Service
 public class MovieServiceImpl implements MovieService {
     private final MovieRepo movieRepository;
-    private final Client client;
+    private final TMDBClient TMDBClient;
     private final WrapperMapper wrapperMapper;
     private final MovieMapper movieMapper;
     private final ViewsRepo viewsRepo;
     private final VotesRepo votesRepo;
-    public MovieServiceImpl(MovieRepo movieRepository, Client client, WrapperMapper wrapperMapper, MovieMapper movieMapper, ViewsRepo viewsRepo, VotesRepo votesRepo) {
+    public MovieServiceImpl(MovieRepo movieRepository, TMDBClient TMDBClient, WrapperMapper wrapperMapper, MovieMapper movieMapper, ViewsRepo viewsRepo, VotesRepo votesRepo) {
         this.movieRepository = movieRepository;
-        this.client = client;
+        this.TMDBClient = TMDBClient;
         this.wrapperMapper = wrapperMapper;
         this.movieMapper = movieMapper;
         this.viewsRepo = viewsRepo;
@@ -51,7 +50,7 @@ public class MovieServiceImpl implements MovieService {
     @Override
     public Optional<MovieEntity> getMovie(Long id, boolean filterAdult) {
         if (id > 90000000000L) {
-            MovieDto movieDto = (MovieDto) client.getMovie(id - 90000000000L).getBody();
+            MovieDto movieDto = (MovieDto) TMDBClient.getMovie(id - 90000000000L).getBody();
             if (movieDto != null) {
                 movieDto.setType("External");
             }
@@ -94,20 +93,20 @@ public class MovieServiceImpl implements MovieService {
                 log.info("Adult filter---------------");
                 return Stream.concat(
                         moviesList.stream().filter(movie -> !movie.isAdult()),
-                        wrapperMapper.mapToMovies((WrapperDto) client.getTrending(((totalPageNumber - pageNo) + 1 ), pageSize).getBody())
+                        wrapperMapper.mapToMovies((WrapperDto) TMDBClient.getTrending(((totalPageNumber - pageNo) + 1 ), pageSize).getBody())
                                 .stream()
                                 .filter(movie -> !movie.isAdult())
                                 .limit(pageSize - movieListSize)
                 ).collect(Collectors.toList());
             }
-            List<MovieEntity> fr = wrapperMapper.mapToMovies((WrapperDto) client.getTrending(((totalPageNumber - pageNo) + 1 ), pageSize).getBody()).stream().limit(pageSize - movieListSize).toList();
+            List<MovieEntity> fr = wrapperMapper.mapToMovies((WrapperDto) TMDBClient.getTrending(((totalPageNumber - pageNo) + 1 ), pageSize).getBody()).stream().limit(pageSize - movieListSize).toList();
             log.info("No filter--------");
             return Stream.concat(moviesList.stream(), fr.stream()).collect(Collectors.toList());
         }
        // if the requested page doesn't have any content then get all from feign
         if (pageNo >= totalPageNumber && movieListSize.equals(0)) {
             log.info("All from feign");
-            ResponseEntity<?> c = client.getTrending((pageNo - totalPageNumber) + 1, pageSize);
+            ResponseEntity<?> c = TMDBClient.getTrending((pageNo - totalPageNumber) + 1, pageSize);
             if (filterAdult) {
                 return wrapperMapper.mapToMovies((WrapperDto) c.getBody()).stream().filter(movie -> !movie.isAdult()).collect(Collectors.toList());
             }

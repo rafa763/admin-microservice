@@ -113,7 +113,6 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     public void reissueToken(HttpServletRequest request, HttpServletResponse response) {
         try {
             String token = tokenService.extractToken(request);
-            System.out.println("Token: " + token);
             DecodedJWT decodedJWT = tokenService.verifyToken(token);
             String email = decodedJWT.getSubject();
             CustomUserDetails user = (CustomUserDetails) loadUserByUsername(email);
